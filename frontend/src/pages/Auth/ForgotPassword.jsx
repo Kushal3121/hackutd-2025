@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Lock, AtSign } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../../layouts/AuthLayout';
 import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
@@ -12,6 +13,7 @@ export default function ForgotPassword() {
     newPassword: '',
   });
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -21,8 +23,12 @@ export default function ForgotPassword() {
     setLoading(true);
     try {
       const res = await resetPassword(form);
-      if (res.message) toast.success(res.message);
-      else toast.error(res.error || 'Reset failed');
+      if (res.message) {
+        toast.success(res.message);
+        setTimeout(() => navigate('/login'), 2000); // redirect after 2s
+      } else {
+        toast.error(res.error || 'Reset failed');
+      }
     } catch {
       toast.error('Server not reachable — please check backend.');
     } finally {
@@ -129,12 +135,12 @@ export default function ForgotPassword() {
             </motion.button>
 
             <div className='text-sm text-center mt-4'>
-              <a
-                href='/login'
+              <Link
+                to='/login'
                 className='text-indigo-600 hover:text-indigo-800 transition font-medium'
               >
                 Back to Login
-              </a>
+              </Link>
             </div>
           </form>
         </div>

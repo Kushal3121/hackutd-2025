@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Lock, AtSign } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../../layouts/AuthLayout';
 import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
@@ -8,6 +9,7 @@ import { loginUser } from '../../services/api';
 export default function Login() {
   const [form, setForm] = useState({ username: '', password: '' });
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -20,7 +22,10 @@ export default function Login() {
       if (res.user) {
         toast.success('Login successful!');
         localStorage.setItem('user', JSON.stringify(res.user));
-      } else toast.error(res.error || 'Invalid credentials');
+        navigate('/'); // redirect to home or dashboard
+      } else {
+        toast.error(res.error || 'Invalid credentials');
+      }
     } catch {
       toast.error('Server not reachable');
     } finally {
@@ -32,12 +37,13 @@ export default function Login() {
     <AuthLayout>
       <Toaster />
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
+        transition={{ duration: 0.5 }}
+        className='flex justify-center w-full'
       >
-        <div className='bg-white/80 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl px-10 py-12 w-full sm:max-w-lg md:max-w-xl mx-auto'>
-          <h2 className='text-center text-4xl font-extrabold text-gray-900 mb-8'>
+        <div className='bg-white/80 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl px-10 py-12 w-full sm:max-w-lg md:max-w-xl'>
+          <h2 className='text-center text-4xl font-extrabold text-gray-900 mb-10'>
             Welcome Back
           </h2>
 
@@ -88,18 +94,23 @@ export default function Login() {
               </div>
             </div>
 
+            {/* Forgot + Signup Links */}
             <div className='flex justify-between text-sm'>
-              <a
-                href='/forgot-password'
-                className='text-indigo-600 hover:underline'
+              <Link
+                to='/forgot-password'
+                className='text-indigo-600 hover:underline font-medium'
               >
                 Forgot password?
-              </a>
-              <a href='/signup' className='text-gray-600 hover:text-indigo-600'>
+              </Link>
+              <Link
+                to='/signup'
+                className='text-gray-600 hover:text-indigo-600 font-medium transition'
+              >
                 Create account
-              </a>
+              </Link>
             </div>
 
+            {/* Submit Button */}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}

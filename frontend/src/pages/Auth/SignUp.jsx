@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { Mail, Lock, User, AtSign } from 'lucide-react';
+import { Lock, User, AtSign } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
 import AuthLayout from '../../layouts/AuthLayout';
 import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
@@ -12,6 +13,7 @@ export default function Signup() {
     password: '',
   });
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -23,7 +25,7 @@ export default function Signup() {
       const res = await signupUser(form);
       if (res.user) {
         toast.success('Account created successfully!');
-        // navigate("/login");
+        setTimeout(() => navigate('/login'), 2000); // redirect after 2s
       } else toast.error(res.error || 'Signup failed');
     } catch {
       toast.error('Server not reachable');
@@ -116,16 +118,18 @@ export default function Signup() {
               </div>
             </div>
 
+            {/* Already have an account */}
             <div className='text-sm text-center'>
               <span className='text-gray-700'>Already have an account? </span>
-              <a
-                href='/login'
+              <Link
+                to='/login'
                 className='text-indigo-600 hover:text-indigo-800 font-medium transition'
               >
                 Sign In
-              </a>
+              </Link>
             </div>
 
+            {/* Submit Button */}
             <motion.button
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.97 }}
