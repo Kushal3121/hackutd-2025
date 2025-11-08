@@ -1,35 +1,32 @@
 import { useState } from 'react';
-import { Mail, Lock, User } from 'lucide-react';
+import { Mail, Lock, User, AtSign } from 'lucide-react';
 import AuthLayout from '../../layouts/AuthLayout';
 import toast, { Toaster } from 'react-hot-toast';
 import { motion } from 'framer-motion';
-import api from '../../services/http';
+import { signupUser } from '../../services/api';
 
 export default function Signup() {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [form, setForm] = useState({
+    username: '',
+    name: '',
+    password: '',
+  });
   const [loading, setLoading] = useState(false);
+
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (password !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
-
     setLoading(true);
     try {
-      const res = await api.post('/auth/signup', { name, email, password });
-      if (res.data.success) {
+      const res = await signupUser(form);
+      if (res.user) {
         toast.success('Account created successfully!');
         // navigate("/login");
-      } else {
-        toast.error(res.data.message || 'Something went wrong');
-      }
-    } catch (err) {
-      toast.error('Server not reachable — backend not connected yet');
+      } else toast.error(res.error || 'Signup failed');
+    } catch {
+      toast.error('Server not reachable');
     } finally {
       setLoading(false);
     }
@@ -41,7 +38,7 @@ export default function Signup() {
       <motion.div
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: 'easeOut' }}
+        transition={{ duration: 0.5 }}
         className='flex justify-center w-full'
       >
         <div className='bg-white/80 backdrop-blur-xl border border-white/50 shadow-2xl rounded-3xl px-10 py-12 w-full sm:max-w-lg md:max-w-xl'>
@@ -50,7 +47,30 @@ export default function Signup() {
           </h2>
 
           <form onSubmit={handleSubmit} className='space-y-6'>
-            {/* Name */}
+            {/* Username */}
+            <div>
+              <label className='block text-sm font-medium text-gray-700 mb-1'>
+                Username
+              </label>
+              <div className='relative flex items-center'>
+                <AtSign
+                  className='absolute left-3 text-gray-400 pointer-events-none'
+                  size={18}
+                  style={{ top: '50%', transform: 'translateY(-50%)' }}
+                />
+                <input
+                  type='text'
+                  name='username'
+                  value={form.username}
+                  onChange={handleChange}
+                  placeholder='johndoe123'
+                  required
+                  className='w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white/60 placeholder-gray-400'
+                />
+              </div>
+            </div>
+
+            {/* Full Name */}
             <div>
               <label className='block text-sm font-medium text-gray-700 mb-1'>
                 Full Name
@@ -63,35 +83,12 @@ export default function Signup() {
                 />
                 <input
                   type='text'
-                  autoComplete='name'
-                  className='w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white/60 placeholder-gray-400'
+                  name='name'
+                  value={form.name}
+                  onChange={handleChange}
                   placeholder='John Doe'
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
                   required
-                />
-              </div>
-            </div>
-
-            {/* Email */}
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>
-                Email Address
-              </label>
-              <div className='relative flex items-center'>
-                <Mail
-                  className='absolute left-3 text-gray-400 pointer-events-none'
-                  size={18}
-                  style={{ top: '50%', transform: 'translateY(-50%)' }}
-                />
-                <input
-                  type='email'
-                  autoComplete='email'
                   className='w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white/60 placeholder-gray-400'
-                  placeholder='you@example.com'
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
                 />
               </div>
             </div>
@@ -109,35 +106,12 @@ export default function Signup() {
                 />
                 <input
                   type='password'
-                  autoComplete='new-password'
-                  className='w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white/60 placeholder-gray-400'
+                  name='password'
+                  value={form.password}
+                  onChange={handleChange}
                   placeholder='••••••••'
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   required
-                />
-              </div>
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label className='block text-sm font-medium text-gray-700 mb-1'>
-                Confirm Password
-              </label>
-              <div className='relative flex items-center'>
-                <Lock
-                  className='absolute left-3 text-gray-400 pointer-events-none'
-                  size={18}
-                  style={{ top: '50%', transform: 'translateY(-50%)' }}
-                />
-                <input
-                  type='password'
-                  autoComplete='new-password'
                   className='w-full pl-10 pr-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white/60 placeholder-gray-400'
-                  placeholder='••••••••'
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
                 />
               </div>
             </div>
