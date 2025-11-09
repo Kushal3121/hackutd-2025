@@ -7,6 +7,7 @@ import About from '../../pages/About';
 import Home from '../../pages/Home';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import Dashboard from '../../pages/Dashboard';
+import CarDetails from '../../pages/CarDetails';
 
 const router = createBrowserRouter([
   { path: '/', element: <Home /> },
@@ -14,11 +15,19 @@ const router = createBrowserRouter([
   { path: '/signup', element: <Signup /> },
   { path: '/forgot-password', element: <ForgotPassword /> },
   { path: '/about', element: <About /> },
+
   {
     path: '/dashboard',
     element: <DashboardLayout />,
     children: [
       { index: true, element: <Dashboard /> },
+
+      // 👇 NEW route for car detail/configurator
+      {
+        path: 'cars/:id',
+        element: <CarDetails />,
+      },
+
       {
         path: 'compare',
         element: (
@@ -33,6 +42,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+
   { path: '*', element: <NotFound /> },
 ]);
 

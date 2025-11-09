@@ -1,6 +1,9 @@
 import { MapPin, Fuel } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function CarCard({ car }) {
+  const navigate = useNavigate();
+
   return (
     <div
       className='
@@ -49,7 +52,7 @@ export default function CarCard({ car }) {
         </div>
       </div>
 
-      {/* --- Hover Action Layer (refined) --- */}
+      {/* --- Hover Action Layer --- */}
       <div
         className='
           absolute inset-0 flex flex-col items-center justify-center text-center
@@ -61,6 +64,7 @@ export default function CarCard({ car }) {
           {car.packages.length} Optional Packages
         </p>
         <button
+          onClick={() => navigate(`/dashboard/cars/${car.id}`)}
           className='
             bg-toyotaRed text-white px-4 py-2 rounded-lg text-sm font-semibold
             hover:bg-toyotaRed-dark transition shadow-md hover:shadow-lg
