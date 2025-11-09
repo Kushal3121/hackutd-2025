@@ -111,9 +111,9 @@ export default function Garage() {
               </div>
 
               {/* Content */}
-              <div className='flex-1 p-5 flex flex-col md:flex-row md:items-center md:justify-between gap-4'>
+              <div className='flex-1 p-5 flex flex-col gap-4 md:grid md:grid-cols-[1fr_auto_auto] md:items-center'>
                 {/* Info */}
-                <div>
+                <div className='min-w-0'>
                   <div className='text-lg font-semibold text-gray-900'>
                     {car.name}
                   </div>
@@ -121,14 +121,14 @@ export default function Garage() {
                 </div>
 
                 {/* Price */}
-                <div className='flex items-center gap-3'>
+                <div className='flex items-center gap-3 md:justify-end md:pr-4'>
                   <div className='text-toyotaRed font-semibold text-lg'>
                     {car.currency} {Number(car.msrp || 0).toLocaleString()}
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className='flex items-center gap-3 md:min-w-[360px]'>
+                <div className='flex items-center gap-3 md:justify-end md:min-w-[360px]'>
                   <button
                     onClick={() => {
                       setSelectedCar(car);

@@ -12,6 +12,10 @@ function findCarsByModelTokens(cars, tokens = []) {
 
 export function applyFilters(cars, filters = {}) {
   let list = [...cars];
+  // If user specified model tokens, constrain results to those models first
+  if (Array.isArray(filters.models) && filters.models.length > 0) {
+    list = findCarsByModelTokens(list, filters.models);
+  }
   if (filters.region) list = list.filter((c) => c.region === filters.region);
   if (filters.bodyType)
     list = list.filter((c) => c.series === filters.bodyType);

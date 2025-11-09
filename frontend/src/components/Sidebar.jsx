@@ -19,7 +19,7 @@ export default function Sidebar({ onLogout }) {
   return (
     <aside className='w-64 bg-white text-toyotaGray flex flex-col p-5 border-r border-toyotaGray-mid'>
       <h2 className='text-2xl font-bold text-toyotaRed mb-8 uppercase tracking-wider'>
-        Toyota
+        Kynetic
       </h2>
 
       <nav className='space-y-2'>

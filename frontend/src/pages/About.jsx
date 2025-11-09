@@ -15,12 +15,12 @@ export default function About() {
         {/* Title */}
         <h1 className='text-4xl sm:text-5xl font-extrabold mb-6 text-toyotaGray-dark'>
           About{' '}
-          <span className='text-toyotaRed'>Toyota Mobility Challenge</span>
+          <span className='text-toyotaRed'>Kynetic Mobility Challenge</span>
         </h1>
 
         {/* Description */}
         <p className='max-w-2xl text-lg text-gray-700 leading-relaxed mb-10'>
-          The Toyota Mobility Challenge is an initiative to reimagine the
+          The Kynetic Mobility Challenge is an initiative to reimagine the
           driving experience through technology and innovation. Our goal is to
           combine cutting-edge AI, real-time analytics, and human-centered
           design to make every journey safer, smarter, and more connected.
@@ -54,7 +54,7 @@ export default function About() {
 
       {/* Footer */}
       <footer className='text-center text-toyotaGray text-sm border-t border-gray-200 py-6'>
-        © {new Date().getFullYear()} Toyota Mobility Challenge — All Rights
+        © {new Date().getFullYear()} Kynetic Mobility Challenge — All Rights
         Reserved.
       </footer>
     </div>

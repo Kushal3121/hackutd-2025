@@ -17,7 +17,7 @@ export default function Navbar() {
           className='flex items-center space-x-2'
           onClick={() => setOpen(false)}
         >
-          {/* Toyota logo (you can place an SVG or image here later) */}
+          {/* Kynetic logo (you can place an SVG or image here later) */}
           <span className='text-2xl font-extrabold text-toyotaRed tracking-tight hover:text-toyotaRed-dark transition'>
             TOYOTA
           </span>

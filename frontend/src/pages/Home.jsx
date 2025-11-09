@@ -17,11 +17,11 @@ export default function Home() {
         >
           <h1 className='text-5xl sm:text-6xl font-extrabold mb-6 leading-tight'>
             Discover the Future of{' '}
-            <span className='text-toyotaRed'>Toyota Mobility</span>
+            <span className='text-toyotaRed'>Kynetic Mobility</span>
           </h1>
 
           <p className='text-lg sm:text-xl text-toyotaGray mb-10'>
-            Explore, compare, and find your dream Toyota — powered by
+            Explore, compare, and find your dream Kynetic — powered by
             innovation, designed for every lifestyle.
           </p>
 
@@ -45,7 +45,7 @@ export default function Home() {
 
       {/* Footer */}
       <footer className='text-center text-toyotaGray py-6 text-sm border-t border-toyotaGray-mid'>
-        © {new Date().getFullYear()} Toyota Mobility Challenge — All Rights
+        © {new Date().getFullYear()} Kynetic Mobility Challenge — All Rights
         Reserved.
       </footer>
     </div>

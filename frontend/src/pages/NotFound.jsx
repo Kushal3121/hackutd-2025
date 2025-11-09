@@ -49,7 +49,7 @@ export default function NotFound() {
         transition={{ delay: 1.2 }}
         className='absolute bottom-6 text-toyotaGray text-sm'
       >
-        © {new Date().getFullYear()} Toyota Mobility Challenge — All Rights
+        © {new Date().getFullYear()} Kynetic Mobility Challenge — All Rights
         Reserved.
       </motion.p>
     </div>

@@ -189,7 +189,7 @@ export default function ChatBot({ cars = [] }) {
     <>
       {/* Floating Button */}
       <button
-        aria-label='Open Toyota AI Assistant'
+        aria-label='Open Kynetic AI Assistant'
         onClick={() => setOpen((v) => !v)}
         className='fixed bottom-6 right-6 z-50 rounded-full bg-[#EB0A1E] text-white w-14 h-14 shadow-lg hover:bg-red-600 transition flex items-center justify-center'
       >
