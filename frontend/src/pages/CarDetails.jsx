@@ -5,11 +5,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ChevronDown } from 'lucide-react';
 import PackageSelector from '../components/PackageSelector';
 import FinanceSelector from '../components/FinanceSelector';
-import AccessorySelector from '../components/Accessoryselector';
-import InteriorSelector from '../components/InteriorSelector';
 import DrivetrainSelector from '../components/DrivetrainSelector';
 import SummarySection from '../components/SummarySection';
-import InsuranceSelector from '../components/Insuranceselector';
 
 export default function CarDetails() {
   const { id } = useParams();
@@ -19,13 +16,11 @@ export default function CarDetails() {
   const [accentColor, setAccentColor] = useState('#EB0A1E');
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState(1);
+  const [selectedPackages, setSelectedPackages] = useState([]);
 
   const refs = {
     package: useRef(null),
     drivetrain: useRef(null),
-    interior: useRef(null),
-    accessory: useRef(null),
-    insurance: useRef(null),
     finance: useRef(null),
     summary: useRef(null),
   };
@@ -205,6 +200,7 @@ export default function CarDetails() {
             car={car}
             accentColor={accentColor}
             visible={step >= 1}
+            onPackagesChange={(list) => setSelectedPackages(list)}
             onComplete={() => {
               setStep(2);
               setTimeout(() => {
@@ -230,64 +226,6 @@ export default function CarDetails() {
               setStep(3);
               setTimeout(() => {
                 requestAnimationFrame(() => {
-                  refs.interior.current?.scrollIntoView({ behavior: 'smooth' });
-                });
-              }, 700);
-            }}
-          />
-        </div>
-      )}
-
-      {/* --- Step 4: Interior --- */}
-      {step >= 3 && (
-        <div ref={refs.interior}>
-          <InteriorSelector
-            accentColor={accentColor}
-            visible={step >= 3}
-            onSelect={() => {
-              setStep(4);
-              setTimeout(() => {
-                requestAnimationFrame(() => {
-                  refs.accessory.current?.scrollIntoView({
-                    behavior: 'smooth',
-                  });
-                });
-              }, 700);
-            }}
-          />
-        </div>
-      )}
-
-      {/* --- Step 5: Accessories --- */}
-      {step >= 4 && (
-        <div ref={refs.accessory}>
-          <AccessorySelector
-            accentColor={accentColor}
-            visible={step >= 4}
-            onSelect={() => {
-              setStep(5);
-              setTimeout(() => {
-                requestAnimationFrame(() => {
-                  refs.insurance.current?.scrollIntoView({
-                    behavior: 'smooth',
-                  });
-                });
-              }, 700);
-            }}
-          />
-        </div>
-      )}
-
-      {/* --- Step 6: Insurance --- */}
-      {step >= 5 && (
-        <div ref={refs.insurance}>
-          <InsuranceSelector
-            accentColor={accentColor}
-            visible={step >= 5}
-            onSelect={() => {
-              setStep(6);
-              setTimeout(() => {
-                requestAnimationFrame(() => {
                   refs.finance.current?.scrollIntoView({ behavior: 'smooth' });
                 });
               }, 700);
@@ -296,14 +234,15 @@ export default function CarDetails() {
         </div>
       )}
 
-      {/* --- Step 7: Finance --- */}
-      {step >= 6 && (
+      {/* --- Step 4: Finance --- */}
+      {step >= 3 && (
         <div ref={refs.finance}>
           <FinanceSelector
+            car={car}
             accentColor={accentColor}
-            visible={step >= 6}
+            visible={step >= 3}
             onComplete={() => {
-              setStep(7);
+              setStep(4);
               setTimeout(() => {
                 requestAnimationFrame(() => {
                   refs.summary.current?.scrollIntoView({ behavior: 'smooth' });
@@ -314,13 +253,14 @@ export default function CarDetails() {
         </div>
       )}
 
-      {/* --- Step 8: Summary --- */}
-      {step >= 7 && (
+      {/* --- Step 5: Summary --- */}
+      {step >= 4 && (
         <div ref={refs.summary}>
           <SummarySection
             car={car}
             accentColor={accentColor}
             selectedColor={selectedColor}
+            selectedPackages={selectedPackages}
           />
         </div>
       )}

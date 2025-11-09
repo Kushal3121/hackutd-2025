@@ -1,14 +1,23 @@
 import { motion } from 'framer-motion';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 export default function DrivetrainSelector({ car, accentColor, onSelect }) {
   const [selected, setSelected] = useState(null);
-  const options = [
-    { label: 'Gas', value: 'Gas' },
-    { label: 'Hybrid', value: 'Hybrid' },
-    { label: 'FWD', value: 'FWD' },
-    { label: 'AWD', value: 'AWD' },
-  ];
+  const options = useMemo(() => {
+    const list = Array.from(
+      new Set([car?.powertrain, car?.drivetrain].filter(Boolean))
+    );
+    return list.map((v) => ({ label: v, value: v }));
+  }, [car?.powertrain, car?.drivetrain]);
+
+  // Auto-advance if there are no options or a single implicit option
+  if (options.length === 0 && onSelect) {
+    requestAnimationFrame(() => onSelect());
+  }
+  if (options.length === 1 && onSelect && selected == null) {
+    setSelected(options[0].value);
+    requestAnimationFrame(() => onSelect());
+  }
 
   return (
     <section className='max-w-5xl mx-auto px-6 pb-20 text-center'>
@@ -42,6 +51,9 @@ export default function DrivetrainSelector({ car, accentColor, onSelect }) {
             {opt.label}
           </motion.button>
         ))}
+        {options.length === 0 && (
+          <p className='text-gray-500'>No drivetrain options available.</p>
+        )}
       </div>
     </section>
   );

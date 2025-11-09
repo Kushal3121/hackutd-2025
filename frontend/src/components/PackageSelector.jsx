@@ -2,7 +2,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useRef } from 'react';
 import { Check, ChevronDown } from 'lucide-react';
 
-export default function PackageSelector({ car, accentColor, onComplete }) {
+export default function PackageSelector({
+  car,
+  accentColor,
+  onComplete,
+  onPackagesChange,
+}) {
   const [selectedPackages, setSelectedPackages] = useState([]);
   const totalExtra = selectedPackages.reduce((sum, p) => sum + p.price, 0);
   const sectionRef = useRef(null);
@@ -13,6 +18,8 @@ export default function PackageSelector({ car, accentColor, onComplete }) {
       const next = alreadySelected
         ? prev.filter((p) => p.name !== pkg.name)
         : [...prev, pkg];
+
+      if (onPackagesChange) onPackagesChange(next);
 
       // Trigger completion when first selection is made
       if (!alreadySelected && prev.length === 0 && onComplete) {
@@ -41,7 +48,7 @@ export default function PackageSelector({ car, accentColor, onComplete }) {
 
       {/* Package Cards */}
       <div className='grid gap-6'>
-        {car.packages.map((pkg, i) => {
+        {(car.packages || []).map((pkg, i) => {
           const isSelected = selectedPackages.some((p) => p.name === pkg.name);
           return (
             <motion.div
@@ -87,6 +94,9 @@ export default function PackageSelector({ car, accentColor, onComplete }) {
             </motion.div>
           );
         })}
+        {car.packages && car.packages.length === 0 && (
+          <p className='text-center text-gray-500'>No packages available for this model.</p>
+        )}
       </div>
 
       {/* Total + Continue */}

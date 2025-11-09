@@ -62,4 +62,44 @@ export const filterCars = async (params = {}) => {
   return data;
 };
 
+// --- Configurator helper APIs (API-first with graceful fallbacks) ---
+export const getPackages = async (carId) => {
+  const { data } = await api.get(`${API_ROUTES.CAR_DETAIL(carId)}/packages`);
+  return data;
+};
+
+export const getDrivetrainOptions = async (carId) => {
+  const { data } = await api.get(
+    `${API_ROUTES.CAR_DETAIL(carId)}/drivetrain-options`
+  );
+  return data;
+};
+
+export const getInteriorOptions = async (carId) => {
+  const { data } = await api.get(`${API_ROUTES.CAR_DETAIL(carId)}/interiors`);
+  return data;
+};
+
+export const getAccessories = async (carId) => {
+  const { data } = await api.get(
+    `${API_ROUTES.CAR_DETAIL(carId)}/accessories`
+  );
+  return data;
+};
+
+export const getInsurancePlans = async (carId) => {
+  const { data } = await api.get(`${API_ROUTES.CAR_DETAIL(carId)}/insurance`);
+  return data;
+};
+
+export const getFinancePlans = async (carId) => {
+  const { data } = await api.get(`${API_ROUTES.CAR_DETAIL(carId)}/finance`);
+  return data; // expected: { finance: {...}, lease: {...} }
+};
+
+export const getSummary = async (carId) => {
+  const { data } = await api.get(`${API_ROUTES.CAR_DETAIL(carId)}/summary`);
+  return data;
+};
+
 export default api;

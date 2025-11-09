@@ -1,10 +1,10 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
 
-export default function FinanceSelector({ accentColor, onComplete }) {
+export default function FinanceSelector({ car, accentColor, onComplete }) {
   const [mode, setMode] = useState('finance');
-  const finance = { apr: 3.9, monthly: 404, term: 60 };
-  const lease = { monthly: 256, term: 36, miles: 12000 };
+  const finance = car?.finance;
+  const lease = car?.lease;
   const active = mode === 'finance' ? finance : lease;
 
   return (
@@ -59,26 +59,37 @@ export default function FinanceSelector({ accentColor, onComplete }) {
         {mode === 'finance' ? (
           <>
             <p className='text-lg text-gray-700 font-medium'>
-              APR: <span className='font-semibold'>{finance.apr}%</span>
+              APR:{' '}
+              <span className='font-semibold'>
+                {finance ? finance.apr : '-'}%
+              </span>
             </p>
             <p className='text-lg text-gray-700 font-medium'>
-              Term: <span className='font-semibold'>{finance.term} months</span>
+              Term:{' '}
+              <span className='font-semibold'>
+                {Array.isArray(finance?.termMonths)
+                  ? finance.termMonths.join(', ')
+                  : finance?.term ?? '-'}{' '}
+                {Array.isArray(finance?.termMonths) ? 'months' : ''}
+              </span>
             </p>
             <p className='text-2xl mt-4 font-bold text-toyotaRed'>
-              USD {finance.monthly}/month
+              {car.currency} {finance ? finance.estimatedMonthly : '-'}/month
             </p>
           </>
         ) : (
           <>
             <p className='text-lg text-gray-700 font-medium'>
               Lease Term:{' '}
-              <span className='font-semibold'>{lease.term} months</span>
+              <span className='font-semibold'>
+                {lease ? lease.termMonths : '-'} months
+              </span>
             </p>
             <p className='text-lg text-gray-700 font-medium'>
               Miles/Year: <span className='font-semibold'>{lease.miles}</span>
             </p>
             <p className='text-2xl mt-4 font-bold text-toyotaRed'>
-              USD {lease.monthly}/month
+              {car.currency} {lease ? lease.monthly : '-'}/month
             </p>
           </>
         )}
