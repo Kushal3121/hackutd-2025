@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 export default function DrivetrainSelector({ car, accentColor, onSelect }) {
   const [selected, setSelected] = useState(null);
@@ -11,13 +11,19 @@ export default function DrivetrainSelector({ car, accentColor, onSelect }) {
   }, [car?.powertrain, car?.drivetrain]);
 
   // Auto-advance if there are no options or a single implicit option
-  if (options.length === 0 && onSelect) {
-    requestAnimationFrame(() => onSelect());
-  }
-  if (options.length === 1 && onSelect && selected == null) {
-    setSelected(options[0].value);
-    requestAnimationFrame(() => onSelect());
-  }
+  useEffect(() => {
+    if (options.length === 0 && onSelect) {
+      // Advance on next tick to avoid state updates during render
+      const id = requestAnimationFrame(() => onSelect());
+      return () => cancelAnimationFrame(id);
+    }
+    if (options.length === 1 && onSelect && selected == null) {
+      // Set local selection and advance
+      setSelected(options[0].value);
+      const id = requestAnimationFrame(() => onSelect());
+      return () => cancelAnimationFrame(id);
+    }
+  }, [options, onSelect, selected]);
 
   return (
     <section className='max-w-5xl mx-auto px-6 pb-20 text-center'>

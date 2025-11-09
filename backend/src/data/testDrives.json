@@ -12,7 +12,8 @@
     "totalPrice": 26236,
     "status": "booked",
     "etaDays": 4,
-    "bookedAt": "2025-11-09T02:56:51.655Z"
+    "bookedAt": "2025-11-09T02:56:51.655Z",
+    "appointmentAt": "2025-11-10T16:00:00.000Z"
   },
   {
     "id": "TD-3",
@@ -79,7 +80,7 @@
     "status": "booked",
     "etaDays": 7,
     "bookedAt": "2025-11-09T07:55:46.271Z",
-    "appointmentAt": "2025-11-12T19:58:00.000Z"
+    "appointmentAt": "2025-11-12T15:30:00.000Z"
   },
   {
     "id": "TD-8",
@@ -95,5 +96,20 @@
     "etaDays": 5,
     "bookedAt": "2025-11-09T08:03:08.097Z",
     "appointmentAt": "2025-11-11T22:00:00.000Z"
+  },
+  {
+    "id": "TD-9",
+    "userId": "e170b58b-6f74-463b-8c6e-ba56b7411aca",
+    "carId": "CAR-2",
+    "carName": "Toyota Corolla",
+    "color": "Supersonic Red",
+    "packages": [
+      "Towing Prep Package"
+    ],
+    "totalPrice": 26047,
+    "status": "booked",
+    "etaDays": 6,
+    "bookedAt": "2025-11-09T10:23:00.287Z",
+    "appointmentAt": "2025-11-12T15:30:00.000Z"
   }
 ]
