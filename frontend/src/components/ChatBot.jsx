@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { MessageSquare, Send, X } from 'lucide-react';
 import ChatMessage from './ChatMessage';
-import { handleAction } from '../utils/chatActions';
+import { handleAction, applyFilters } from '../utils/chatActions';
 import CarCard from './CarCard';
 import { useGarageStore } from '../store/garageStore';
 
@@ -37,7 +37,46 @@ export default function ChatBot({ cars = [] }) {
     setTimeout(async () => {
       const reply = await handleAction(text, latestCars, { addToGarage });
       setThinking(false);
-      setMessages((m) => [...m, { role: 'assistant', content: reply }]);
+      if (reply?.type === 'search') {
+        // Show "searching..." then compute results locally
+        setMessages((m) => [
+          ...m,
+          {
+            role: 'assistant',
+            content: { type: 'text', message: reply.message || 'Searching…' },
+          },
+        ]);
+        setTimeout(() => {
+          const results = applyFilters(latestCars, reply.filters || {});
+          if (!results.length) {
+            setMessages((m) => [
+              ...m,
+              {
+                role: 'assistant',
+                content: {
+                  type: 'text',
+                  message:
+                    'No matches found. Try relaxing your filters or changing the region.',
+                },
+              },
+            ]);
+          } else {
+            setMessages((m) => [
+              ...m,
+              {
+                role: 'assistant',
+                content: {
+                  type: 'cars',
+                  message: `Found ${results.length} match(es). Showing top results:`,
+                  cars: results.slice(0, 3),
+                },
+              },
+            ]);
+          }
+        }, 350);
+      } else {
+        setMessages((m) => [...m, { role: 'assistant', content: reply }]);
+      }
     }, 300);
   };
 
@@ -114,10 +153,12 @@ export default function ChatBot({ cars = [] }) {
                 {messages.map((m, i) => renderMessage(m, i))}
                 {thinking && (
                   <ChatMessage role='assistant'>
-                    <span className='inline-flex items-center gap-2'>
-                      <span className='w-2 h-2 rounded-full bg-[#EB0A1E] animate-pulse' />
-                      Bot is thinking…
-                    </span>
+                    <div className='flex items-center gap-2 text-gray-600'>
+                      <span className='sr-only'>Assistant is typing…</span>
+                      <span className='w-2 h-2 rounded-full bg-[#EB0A1E] animate-bounce' />
+                      <span className='w-2 h-2 rounded-full bg-[#EB0A1E] animate-bounce [animation-delay:120ms]' />
+                      <span className='w-2 h-2 rounded-full bg-[#EB0A1E] animate-bounce [animation-delay:240ms]' />
+                    </div>
                   </ChatMessage>
                 )}
               </div>

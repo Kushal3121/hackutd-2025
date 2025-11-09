@@ -10,7 +10,7 @@ function findCarsByModelTokens(cars, tokens = []) {
   });
 }
 
-function applyFilters(cars, filters = {}) {
+export function applyFilters(cars, filters = {}) {
   let list = [...cars];
   if (filters.region) list = list.filter((c) => c.region === filters.region);
   if (filters.bodyType) list = list.filter((c) => c.series === filters.bodyType);
@@ -54,6 +54,44 @@ export async function handleAction(input, cars, helpers = {}) {
       'I can help with: \n- "show hybrid suvs under 30k"\n- "compare camry and corolla"\n- "recommend me hybrid sedans"\n- "add corolla to my garage"'
     );
   }
+  if (action === 'chitchat') {
+    const type = parsed.chitchat || 'generic';
+    const hour = new Date().getHours();
+    const timeGreet =
+      hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening';
+    switch (type) {
+      case 'greeting':
+        return mkText(
+          `${timeGreet}! I can help you find cars. Try "hybrid suv under 30k" or tell me your budget and region.`
+        );
+      case 'thanks':
+        return mkText(
+          'You’re welcome! Want me to save a car to your garage or compare any models?'
+        );
+      case 'farewell':
+        return mkText('Bye! Happy driving — ping me anytime.');
+      case 'affirmation':
+        return mkText(
+          'Great! Do you have a price range or location I should focus on?'
+        );
+      case 'negative':
+        return mkText(
+          'No worries. Tell me what body type or price you have in mind when you’re ready.'
+        );
+      case 'howareyou':
+        return mkText(
+          "I'm doing great and ready to help. What kind of car are you considering?"
+        );
+      case 'whoareyou':
+        return mkText(
+          'I’m your local Toyota AI Assistant. I can search, compare, recommend, and add cars to your garage — all offline.'
+        );
+      default:
+        return mkText(
+          'Hi there! You can ask me to search, compare, or recommend cars. For example, "electric sedan for 2025" or "compare camry and corolla".'
+        );
+    }
+  }
 
   if (action === 'compare') {
     const list = findCarsByModelTokens(cars, filters.models || [filters.model]).slice(
@@ -95,9 +133,24 @@ export async function handleAction(input, cars, helpers = {}) {
     return mkCars('Here are a few recommendations for you:', top);
   }
 
-  // default: search/filter
+  // search intent from parser
+  if (action === 'search') {
+    // If user provided only vague info, ask a follow-up
+    const hasAnyStrongFilter = !!(filters.maxPrice || filters.region || filters.year);
+    const hasAnySoftFilter = !!(filters.powertrain || filters.bodyType);
+    if (!hasAnyStrongFilter && hasAnySoftFilter) {
+      return mkText('Got it — any budget range in mind?');
+    }
+    return {
+      type: 'search',
+      message: `Searching for ${filters.powertrain || ''} ${filters.bodyType || ''} cars${filters.maxPrice ? ' under $' + Number(filters.maxPrice).toLocaleString() : ''}${filters.region ? ' in ' + filters.region : ''}${filters.year ? ' (' + filters.year + ')' : ''}...`,
+      filters,
+    };
+  }
+
+  // default fallback: run a basic search anyway
   const results = applyFilters(cars, filters);
-  if (results.length === 0) return mkText('No matches found. Try relaxing your filters.');
+  if (results.length === 0) return mkText('No matches found. Try relaxing your filters or changing the region.');
   return mkCars(`Found ${results.length} match(es). Showing top results:`, results.slice(0, 3));
 }
 
