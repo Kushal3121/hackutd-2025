@@ -119,7 +119,7 @@ export default function CarDetails() {
             ></div>
           </div>
 
-          <h1 className='absolute bottom-6 left-8 text-white text-4xl font-extrabold drop-shadow-lg'>
+          <h1 className='py-2 absolute bottom-6 left-8 text-white text-4xl font-extrabold drop-shadow-lg'>
             {car.name}
           </h1>
           <p className='absolute bottom-2 left-8 text-white/90 text-sm drop-shadow'>

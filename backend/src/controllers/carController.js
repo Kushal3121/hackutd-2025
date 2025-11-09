@@ -12,10 +12,25 @@ const loadCars = () => {
   return JSON.parse(data);
 };
 
-// Get all cars
+// Get all cars (supports optional pagination via ?limit=&page= or ?limit=&offset=)
 export const getAllCars = (req, res) => {
   try {
     const cars = loadCars();
+    const { limit, page, offset } = req.query;
+    const lim = parseInt(limit, 10);
+    // Only paginate when a valid limit is provided
+    if (Number.isFinite(lim) && lim > 0) {
+      let start = 0;
+      if (offset !== undefined) {
+        const off = parseInt(offset, 10);
+        start = Number.isFinite(off) && off >= 0 ? off : 0;
+      } else if (page !== undefined) {
+        const p = parseInt(page, 10);
+        start = Number.isFinite(p) && p > 0 ? (p - 1) * lim : 0;
+      }
+      const slice = cars.slice(start, start + lim);
+      return res.json(slice);
+    }
     res.json(cars);
   } catch (error) {
     res.status(500).json({ error: 'Failed to load cars data' });

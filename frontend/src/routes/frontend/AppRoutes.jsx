@@ -10,6 +10,7 @@ import Dashboard from '../../pages/Dashboard';
 import Compare from '../../pages/Compare';
 import TestDrives from '../../pages/TestDrives';
 import CarDetails from '../../pages/CarDetails';
+import Garage from '../../pages/Garage';
 import Lease from '../../pages/Lease';
 
 const router = createBrowserRouter([
@@ -29,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: 'cars/:id',
         element: <CarDetails />,
+      },
+      {
+        path: 'garage',
+        element: <Garage />,
       },
 
       {

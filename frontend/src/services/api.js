@@ -46,8 +46,8 @@ export const getUserDetail = async (username) => {
 };
 
 // --- Car APIs ---
-export const getCars = async () => {
-  const { data } = await api.get(API_ROUTES.CARS);
+export const getCars = async (params) => {
+  const { data } = await api.get(API_ROUTES.CARS, { params });
   return data;
 };
 

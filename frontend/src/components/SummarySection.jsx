@@ -3,6 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { bookTestDrive } from '../services/api';
 import Select from 'react-select';
+import { useGarageStore } from '../store/garageStore';
 
 export default function SummarySection({
   car,
@@ -15,6 +16,9 @@ export default function SummarySection({
   const [showModal, setShowModal] = useState(false);
   const [testDate, setTestDate] = useState(null);
   const [testTime, setTestTime] = useState(null);
+  const garageItems = useGarageStore((s) => s.items);
+  const toggleGarage = useGarageStore((s) => s.toggle);
+  const inGarage = garageItems.some((c) => c.id === car.id);
   const packagesTotal = selectedPackages.reduce(
     (sum, p) => sum + (p.price || 0),
     0
@@ -139,25 +143,33 @@ export default function SummarySection({
         </div>
       </motion.div>
 
-      {/* CTA Button */}
-      <motion.button
-        whileHover={{
-          scale: 1.04,
-          boxShadow: `0 6px 15px ${accentColor}40`,
-        }}
-        whileTap={{ scale: 0.96 }}
-        transition={{ duration: 0.3 }}
-        className='mt-12 px-10 py-4 text-lg rounded-lg font-semibold text-white shadow-md transition-all disabled:opacity-60'
-        style={{ backgroundColor: accentColor }}
-        disabled={isBooking || booked}
-        onClick={() => setShowModal(true)}
-      >
-        {isBooking
-          ? 'Booking…'
-          : booked
-          ? 'Test Drive Booked'
-          : 'Book a Test Drive'}
-      </motion.button>
+      {/* CTA Row */}
+      <div className='mt-12 flex items-center justify-center gap-4'>
+        <motion.button
+          whileHover={{
+            scale: 1.04,
+            boxShadow: `0 6px 15px ${accentColor}40`,
+          }}
+          whileTap={{ scale: 0.96 }}
+          transition={{ duration: 0.3 }}
+          className='px-10 py-4 text-lg rounded-lg font-semibold text-white shadow-md transition-all'
+          style={{ backgroundColor: accentColor }}
+          onClick={() => {
+            toggleGarage(car);
+            toast.success(inGarage ? 'Removed from Garage' : 'Saved to Garage');
+          }}
+        >
+          {inGarage ? 'Remove from Garage' : 'Save to Garage'}
+        </motion.button>
+
+        <button
+          className='px-6 py-3 rounded-lg font-semibold border border-gray-300 hover:border-[#EB0A1E] hover:text-[#EB0A1E] transition disabled:opacity-60'
+          disabled={isBooking || booked}
+          onClick={() => setShowModal(true)}
+        >
+          Book a Test Drive
+        </button>
+      </div>
 
       {showModal && (
         <div className='fixed inset-0 z-50 bg-black/30 flex items-center justify-center'>

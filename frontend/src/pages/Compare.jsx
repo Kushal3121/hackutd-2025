@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import Select from 'react-select';
 import { getCars, bookTestDrive } from '../services/api';
 import { useCompareStore } from '../store/compareStore';
+import { useGarageStore } from '../store/garageStore';
 import toast from 'react-hot-toast';
 import CarSelect from '../components/CarSelect';
 
@@ -17,6 +18,8 @@ export default function Compare() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [testDate, setTestDate] = useState(null);
   const [testTime, setTestTime] = useState(null);
+  const garageItems = useGarageStore((s) => s.items);
+  const toggleGarage = useGarageStore((s) => s.toggle);
   const selectStyles = {
     control: (base) => ({
       ...base,
@@ -312,12 +315,22 @@ export default function Compare() {
                         Book Test Drive
                       </button>
                       <button
-                        onClick={() =>
-                          toast.success(`${car.name} added to cart`)
-                        }
+                        onClick={() => {
+                          toggleGarage(car);
+                          const inGarage = garageItems.some(
+                            (c) => c.id === car.id
+                          );
+                          toast.success(
+                            inGarage
+                              ? `${car.name} removed from garage`
+                              : `${car.name} saved to garage`
+                          );
+                        }}
                         className='w-40 px-5 py-2 border border-gray-400 text-gray-800 font-semibold rounded-md hover:border-[#EB0A1E] hover:text-[#EB0A1E] transition-all'
                       >
-                        Add to Cart
+                        {garageItems.some((c) => c.id === car.id)
+                          ? 'Remove from Garage'
+                          : 'Save to Garage'}
                       </button>
                     </div>
                   </td>

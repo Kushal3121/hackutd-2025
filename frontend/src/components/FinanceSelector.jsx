@@ -54,7 +54,18 @@ export default function FinanceSelector({ car, accentColor, onComplete }) {
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4 }}
-        className='bg-white/80 border border-gray-200 shadow-sm rounded-xl p-8 max-w-md mx-auto'
+        className='bg-white/80 border border-gray-200 shadow-sm rounded-xl p-8 max-w-md mx-auto cursor-pointer hover:shadow-md transition'
+        onClick={() => {
+          if (onComplete) onComplete();
+        }}
+        tabIndex={0}
+        role='button'
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            if (onComplete) onComplete();
+          }
+        }}
       >
         {mode === 'finance' ? (
           <>
