@@ -12,6 +12,7 @@ import { initTestDrives } from './models/testDriveModel.js';
 import { initLeases } from './controllers/leaseController.js';
 import { authMiddleware } from './middleware/authMiddleware.js';
 import aiRoutes from './routes/aiRoutes.js';
+import financeRoutes from './routes/financeRoutes.js';
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api/cars', authMiddleware, carRoutes);
 app.use('/api/testdrive', authMiddleware, testDriveRoutes);
 app.use('/api/lease', authMiddleware, leaseRoutes);
 app.use('/api', aiRoutes);
+app.use('/api', financeRoutes);
 
 app.use((req, res) => res.status(404).json({ error: 'route not found' }));
 

@@ -1,8 +1,11 @@
 import { motion } from 'framer-motion';
 import { useState } from 'react';
+import FinanceCalculator from './FinanceCalculator';
 
-export default function FinanceSelector({ car, accentColor, onComplete }) {
+export default function FinanceSelector({ car, accentColor, onComputed, onContinue }) {
   const [mode, setMode] = useState('finance');
+  const [ready, setReady] = useState(false);
+  const [lastQuote, setLastQuote] = useState(null);
   const finance = car?.finance;
   const lease = car?.lease;
   const active = mode === 'finance' ? finance : lease;
@@ -22,7 +25,7 @@ export default function FinanceSelector({ car, accentColor, onComplete }) {
         <button
           onClick={() => {
             setMode('finance');
-            if (onComplete) onComplete();
+            setReady(false);
           }}
           className={`px-5 py-2 rounded-full font-semibold border ${
             mode === 'finance'
@@ -36,7 +39,21 @@ export default function FinanceSelector({ car, accentColor, onComplete }) {
         <button
           onClick={() => {
             setMode('lease');
-            if (onComplete) onComplete();
+            // Emit lease quote immediately when switching
+            if (lease) {
+              const payload = {
+                kind: 'lease',
+                breakdown: {
+                  monthlyPayment: Number(lease?.monthly || 0),
+                  principal: Number(car?.msrp || 0),
+                  totalInterest: null,
+                  totalPaid: null,
+                },
+              };
+              setLastQuote(payload);
+              setReady(true);
+              if (onComputed) onComputed(payload);
+            }
           }}
           className={`px-5 py-2 rounded-full font-semibold border ${
             mode === 'lease'
@@ -49,62 +66,52 @@ export default function FinanceSelector({ car, accentColor, onComplete }) {
         </button>
       </div>
 
-      <motion.div
-        key={mode}
-        initial={{ opacity: 0, y: 15 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className='bg-white/80 border border-gray-200 shadow-sm rounded-xl p-8 max-w-md mx-auto cursor-pointer hover:shadow-md transition'
-        onClick={() => {
-          if (onComplete) onComplete();
-        }}
-        tabIndex={0}
-        role='button'
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            if (onComplete) onComplete();
-          }
-        }}
-      >
-        {mode === 'finance' ? (
-          <>
-            <p className='text-lg text-gray-700 font-medium'>
-              APR:{' '}
-              <span className='font-semibold'>
-                {finance ? finance.apr : '-'}%
-              </span>
-            </p>
-            <p className='text-lg text-gray-700 font-medium'>
-              Term:{' '}
-              <span className='font-semibold'>
-                {Array.isArray(finance?.termMonths)
-                  ? finance.termMonths.join(', ')
-                  : finance?.term ?? '-'}{' '}
-                {Array.isArray(finance?.termMonths) ? 'months' : ''}
-              </span>
-            </p>
-            <p className='text-2xl mt-4 font-bold text-toyotaRed'>
-              {car.currency} {finance ? finance.estimatedMonthly : '-'}/month
-            </p>
-          </>
-        ) : (
-          <>
-            <p className='text-lg text-gray-700 font-medium'>
-              Lease Term:{' '}
-              <span className='font-semibold'>
-                {lease ? lease.termMonths : '-'} months
-              </span>
-            </p>
-            <p className='text-lg text-gray-700 font-medium'>
-              Miles/Year: <span className='font-semibold'>{lease.miles}</span>
-            </p>
-            <p className='text-2xl mt-4 font-bold text-toyotaRed'>
-              {car.currency} {lease ? lease.monthly : '-'}/month
-            </p>
-          </>
-        )}
-      </motion.div>
+      {mode === 'finance' ? (
+        <FinanceCalculator
+          car={car}
+          accentColor={accentColor}
+          onComputed={(data) => {
+            const payload = { kind: 'finance', ...data };
+            setLastQuote(payload);
+            setReady(true);
+            if (onComputed) onComputed(payload);
+          }}
+        />
+      ) : (
+        <motion.div
+          key='lease'
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className='bg-white/80 border border-gray-200 shadow-sm rounded-xl p-8 max-w-md mx-auto'
+        >
+          <p className='text-lg text-gray-700 font-medium'>
+            Lease Term:{' '}
+            <span className='font-semibold'>
+              {lease ? lease.termMonths : '-'} months
+            </span>
+          </p>
+          <p className='text-lg text-gray-700 font-medium'>
+            Miles/Year: <span className='font-semibold'>{lease?.miles ?? '-'}</span>
+          </p>
+          <p className='text-2xl mt-4 font-bold text-toyotaRed'>
+            {car.currency} {lease ? lease.monthly : '-'}/month
+          </p>
+        </motion.div>
+      )}
+
+      <div className='mt-8'>
+        <button
+          disabled={!ready}
+          onClick={() => onContinue && onContinue(lastQuote)}
+          className={`px-6 py-3 rounded-lg font-semibold transition ${
+            ready ? 'text-white' : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+          }`}
+          style={ready ? { backgroundColor: accentColor } : undefined}
+        >
+          Continue to Summary
+        </button>
+      </div>
 
       {/* No Continue button; parent scrolls immediately after selection */}
     </section>

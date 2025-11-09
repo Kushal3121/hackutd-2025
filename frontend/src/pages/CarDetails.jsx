@@ -17,6 +17,7 @@ export default function CarDetails() {
   const [loading, setLoading] = useState(true);
   const [step, setStep] = useState(1);
   const [selectedPackages, setSelectedPackages] = useState([]);
+  const [quote, setQuote] = useState(null); // { kind: 'finance'|'lease', breakdown: {...} }
 
   const refs = {
     package: useRef(null),
@@ -258,30 +259,24 @@ export default function CarDetails() {
           <FinanceSelector
             car={car}
             accentColor={accentColor}
-            visible={step >= 3}
-            onComplete={() => {
-              setStep(4);
-              setTimeout(() => {
-                requestAnimationFrame(() => {
-                  refs.summary.current?.scrollIntoView({ behavior: 'smooth' });
-                });
-              }, 700);
+            onComputed={(data) => {
+              setQuote(data || null);
+            }}
+            onContinue={(payload) => {
+              const state = {
+                car,
+                accentColor,
+                selectedColor,
+                selectedPackages,
+                quote: payload || quote,
+              };
+              navigate('/dashboard/summary', { state });
             }}
           />
         </div>
       )}
 
-      {/* --- Step 5: Summary --- */}
-      {step >= 4 && (
-        <div ref={refs.summary}>
-          <SummarySection
-            car={car}
-            accentColor={accentColor}
-            selectedColor={selectedColor}
-            selectedPackages={selectedPackages}
-          />
-        </div>
-      )}
+      {/* Summary moved to standalone page */}
     </div>
   );
 }

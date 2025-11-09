@@ -3,6 +3,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useState } from 'react';
 import { bookTestDrive } from '../services/api';
 import Select from 'react-select';
+import AppointmentModal from './AppointmentModal';
 import { useGarageStore } from '../store/garageStore';
 
 export default function SummarySection({
@@ -10,6 +11,7 @@ export default function SummarySection({
   accentColor,
   selectedColor,
   selectedPackages = [],
+  quote = null,
 }) {
   const [isBooking, setIsBooking] = useState(false);
   const [booked, setBooked] = useState(false);
@@ -61,14 +63,15 @@ export default function SummarySection({
   };
 
   return (
-    <section className='max-w-4xl mx-auto text-center py-24'>
+    <section className='max-w-4xl mx-auto text-center py-12'>
       <Toaster position='top-right' reverseOrder={false} />
       {/* Header */}
       <motion.h2
         initial={{ opacity: 0, y: 15 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className='text-4xl font-bold mb-12 text-gray-900 tracking-tight'
+        className='text-4xl font-bold mb-12 tracking-tight'
+        style={{ color: accentColor }}
       >
         Your Build Summary
       </motion.h2>
@@ -112,7 +115,10 @@ export default function SummarySection({
 
           {/* Right: Pricing breakdown */}
           <div className='rounded-2xl border border-gray-200 bg-gray-50 p-8 shadow-sm'>
-            <div className='text-lg font-semibold text-gray-900 mb-5'>
+            <div
+              className='text-lg font-semibold mb-5'
+              style={{ color: accentColor }}
+            >
               Pricing Summary
             </div>
             <ul className='space-y-3 text-[15px]'>
@@ -144,23 +150,82 @@ export default function SummarySection({
                 value={formatCurrency(car.currency, totalPrice)}
                 strong
               />
-              <BreakdownRow
-                label={`Estimated Tax (${(getTaxRate(car) * 100).toFixed(1)}%)`}
-                value={formatCurrency(
-                  car.currency,
-                  Math.round(totalPrice * getTaxRate(car))
-                )}
-              />
+              {!quote && (
+                <BreakdownRow
+                  label={`Estimated Tax (${(getTaxRate(car) * 100).toFixed(
+                    1
+                  )}%)`}
+                  value={formatCurrency(
+                    car.currency,
+                    Math.round(totalPrice * getTaxRate(car))
+                  )}
+                />
+              )}
               <div className='border-t border-gray-200 my-3' />
-              <BreakdownRow
-                label='Estimated Total'
-                value={formatCurrency(
-                  car.currency,
-                  Math.round(totalPrice * (1 + getTaxRate(car)))
-                )}
-                xlarge
-                accent={accentColor}
-              />
+              {quote?.kind === 'finance' ? (
+                <>
+                  <BreakdownRow
+                    label='Financed Principal'
+                    value={formatCurrency(
+                      car.currency,
+                      quote.breakdown?.principal
+                    )}
+                  />
+                  <BreakdownRow
+                    label='Estimated Monthly'
+                    value={formatCurrency(
+                      car.currency,
+                      quote.breakdown?.monthlyPayment
+                    )}
+                    xlarge
+                    accent={accentColor}
+                  />
+                  <BreakdownRow
+                    label='Total Interest'
+                    value={formatCurrency(
+                      car.currency,
+                      quote.breakdown?.totalInterest
+                    )}
+                  />
+                  <BreakdownRow
+                    label='Total Paid'
+                    value={formatCurrency(
+                      car.currency,
+                      quote.breakdown?.totalPaid
+                    )}
+                    strong
+                  />
+                </>
+              ) : quote?.kind === 'lease' ? (
+                <>
+                  <BreakdownRow
+                    label='Lease Monthly'
+                    value={formatCurrency(
+                      car.currency,
+                      quote.breakdown?.monthlyPayment
+                    )}
+                    xlarge
+                    accent={accentColor}
+                  />
+                  <BreakdownRow
+                    label='Financed Principal'
+                    value={formatCurrency(
+                      car.currency,
+                      quote.breakdown?.principal ?? totalPrice
+                    )}
+                  />
+                </>
+              ) : (
+                <BreakdownRow
+                  label='Estimated Total'
+                  value={formatCurrency(
+                    car.currency,
+                    Math.round(totalPrice * (1 + getTaxRate(car)))
+                  )}
+                  xlarge
+                  accent={accentColor}
+                />
+              )}
             </ul>
             <div className='mt-4 text-xs text-gray-500'>
               Taxes estimated based on region. Final pricing may vary by dealer.
@@ -189,7 +254,8 @@ export default function SummarySection({
         </motion.button>
 
         <button
-          className='px-6 py-3 rounded-lg font-semibold border border-gray-300 hover:border-[#EB0A1E] hover:text-[#EB0A1E] transition disabled:opacity-60'
+          className='px-6 py-3 rounded-lg font-semibold border border-gray-300 transition disabled:opacity-60'
+          style={{ borderColor: accentColor, color: accentColor }}
           disabled={isBooking || booked}
           onClick={() => setShowModal(true)}
         >
@@ -197,64 +263,22 @@ export default function SummarySection({
         </button>
       </div>
 
-      {showModal && (
-        <div className='fixed inset-0 z-50 bg-black/30 flex items-center justify-center'>
-          <div className='bg-white rounded-lg shadow-lg w-full max-w-md'>
-            <div className='p-4 border-b border-gray-200 flex items-center justify-between'>
-              <h4 className='text-lg font-semibold'>Select date & time</h4>
-              <button
-                onClick={() => setShowModal(false)}
-                className='text-gray-500 hover:text-gray-700'
-              >
-                ×
-              </button>
-            </div>
-            <div className='p-4 space-y-4'>
-              <div className='grid grid-cols-3 items-center gap-3'>
-                <label className='text-sm text-gray-600'>Date</label>
-                <div className='col-span-2'>
-                  <Select
-                    options={getDateOptions(30)}
-                    value={testDate}
-                    onChange={(opt) => setTestDate(opt)}
-                    isSearchable={false}
-                    styles={selectStyles}
-                    placeholder='Select date'
-                  />
-                </div>
-              </div>
-              <div className='grid grid-cols-3 items-center gap-3'>
-                <label className='text-sm text-gray-600'>Time</label>
-                <div className='col-span-2'>
-                  <Select
-                    options={getTimeOptions()}
-                    value={testTime}
-                    onChange={(opt) => setTestTime(opt)}
-                    isSearchable={false}
-                    styles={selectStyles}
-                    placeholder='Select time'
-                  />
-                </div>
-              </div>
-            </div>
-            <div className='p-4 border-t border-gray-200 flex items-center justify-end gap-2'>
-              <button
-                onClick={() => setShowModal(false)}
-                className='px-4 py-2 rounded-md border border-gray-300'
-              >
-                Cancel
-              </button>
-              <button
-                onClick={submitBooking}
-                className='px-4 py-2 rounded-md bg-[#EB0A1E] text-white font-semibold'
-                disabled={isBooking}
-              >
-                Confirm
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <AppointmentModal
+        title='Edit appointment'
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        onSubmit={submitBooking}
+        isSubmitting={isBooking}
+        dateOptions={getDateOptions(30)}
+        timeOptions={getTimeOptions()}
+        selectStyles={selectStyles}
+        dateValue={testDate}
+        timeValue={testTime}
+        onDateChange={(opt) => setTestDate(opt)}
+        onTimeChange={(opt) => setTestTime(opt)}
+        submitLabel='Save'
+        cancelLabel='Cancel'
+      />
     </section>
   );
 }

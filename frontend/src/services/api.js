@@ -164,4 +164,10 @@ export const deleteLeaseBooking = async (id) => {
   return data;
 };
 
+// --- Finance calculation ---
+export const calcFinance = async (payload) => {
+  const { data } = await api.post('/api/finance/calc', payload);
+  return data;
+};
+
 export default api;

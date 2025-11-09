@@ -12,6 +12,7 @@ import TestDrives from '../../pages/TestDrives';
 import CarDetails from '../../pages/CarDetails';
 import Garage from '../../pages/Garage';
 import Lease from '../../pages/Lease';
+import SummaryPage from '../../pages/SummaryPage';
 
 const router = createBrowserRouter([
   { path: '/', element: <Home /> },
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: 'lease',
         element: <Lease />,
+      },
+      {
+        path: 'summary',
+        element: <SummaryPage />,
       },
       {
         path: 'profile',
