@@ -35,7 +35,7 @@ export default function Login() {
 
   return (
     <AuthLayout>
-      <Toaster />
+      <Toaster position='top-right' reverseOrder={false} />
       <motion.div
         initial={{ opacity: 0, y: 25 }}
         animate={{ opacity: 1, y: 0 }}

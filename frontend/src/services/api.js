@@ -62,6 +62,17 @@ export const filterCars = async (params = {}) => {
   return data;
 };
 
+// --- Test Drive APIs ---
+export const bookTestDrive = async (payload) => {
+  const { data } = await api.post(API_ROUTES.TESTDRIVE, payload);
+  return data;
+};
+
+export const getUserTestDrives = async (userId) => {
+  const { data } = await api.get(API_ROUTES.TESTDRIVE_USER(userId));
+  return data;
+};
+
 // --- Configurator helper APIs (API-first with graceful fallbacks) ---
 export const getPackages = async (carId) => {
   const { data } = await api.get(`${API_ROUTES.CAR_DETAIL(carId)}/packages`);

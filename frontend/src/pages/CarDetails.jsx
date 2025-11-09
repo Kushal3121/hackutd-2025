@@ -42,10 +42,28 @@ export default function CarDetails() {
     '089W': '#F5F5F5',
   };
 
-  // ✅ Fixed: correctly scrolls to the next section
+  const isLightHex = (hex) => {
+    if (!hex || typeof hex !== 'string') return false;
+    const h = hex.replace('#', '');
+    const full =
+      h.length === 3
+        ? h
+            .split('')
+            .map((c) => c + c)
+            .join('')
+        : h;
+    const bigint = parseInt(full, 16);
+    const r = (bigint >> 16) & 255;
+    const g = (bigint >> 8) & 255;
+    const b = bigint & 255;
+    const luminance = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+    return luminance > 0.85;
+  };
+
   const handleColorSelect = (color) => {
     setSelectedColor(color);
-    const shade = colorMap[color.code] || '#EB0A1E';
+    const base = colorMap[color.code] || '#EB0A1E';
+    const shade = isLightHex(base) ? '#EB0A1E' : base;
     setAccentColor(shade);
 
     setTimeout(() => {
@@ -65,7 +83,7 @@ export default function CarDetails() {
       className='min-h-screen transition-all duration-1000'
       style={{
         background: selectedColor
-          ? `linear-gradient(to bottom, ${accentColor}25 0%, #ffffff 60%, ${accentColor}10 100%)`
+          ? `linear-gradient(to bottom, ${accentColor}10 0%, #ffffff 60%, ${accentColor}10 100%)`
           : '#fff',
       }}
     >

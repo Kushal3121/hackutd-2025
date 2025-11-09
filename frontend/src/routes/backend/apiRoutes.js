@@ -14,4 +14,7 @@ export const API_ROUTES = {
   CARS: `${BASE_URL}/api/cars`, // Get all cars
   CAR_DETAIL: (id) => `${BASE_URL}/api/cars/${id}`, // Get car by ID
   CAR_FILTER: `${BASE_URL}/api/cars/filter`, // Filter by region/year
+  // --- Test drive routes ---
+  TESTDRIVE: `${BASE_URL}/api/testdrive`,
+  TESTDRIVE_USER: (userId) => `${BASE_URL}/api/testdrive/${userId}`,
 };

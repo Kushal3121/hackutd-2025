@@ -1,4 +1,7 @@
 import { motion } from 'framer-motion';
+import toast, { Toaster } from 'react-hot-toast';
+import { useState } from 'react';
+import { bookTestDrive } from '../services/api';
 
 export default function SummarySection({
   car,
@@ -6,6 +9,8 @@ export default function SummarySection({
   selectedColor,
   selectedPackages = [],
 }) {
+  const [isBooking, setIsBooking] = useState(false);
+  const [booked, setBooked] = useState(false);
   const packagesTotal = selectedPackages.reduce(
     (sum, p) => sum + (p.price || 0),
     0
@@ -13,8 +18,36 @@ export default function SummarySection({
   const colorExtra = selectedColor?.extraCost || 0;
   const totalPrice = (car?.msrp || 0) + colorExtra + packagesTotal;
 
+  const handleBook = async () => {
+    if (isBooking || booked) return;
+    try {
+      setIsBooking(true);
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      const payload = {
+        userId: user?.id || user?.username || 'guest',
+        carId: car.id,
+        carName: car.name,
+        color: selectedColor?.name || null,
+        packages: selectedPackages.map((p) => p.name),
+        totalPrice,
+      };
+      const res = await bookTestDrive(payload);
+      if (res?.id) {
+        setBooked(true);
+        toast.success('Test drive booked!');
+      } else {
+        toast.error(res?.error || 'Booking failed');
+      }
+    } catch {
+      toast.error('Server not reachable');
+    } finally {
+      setIsBooking(false);
+    }
+  };
+
   return (
     <section className='max-w-4xl mx-auto text-center py-24'>
+      <Toaster position='top-right' reverseOrder={false} />
       {/* Header */}
       <motion.h2
         initial={{ opacity: 0, y: 15 }}
@@ -103,10 +136,16 @@ export default function SummarySection({
         }}
         whileTap={{ scale: 0.96 }}
         transition={{ duration: 0.3 }}
-        className='mt-12 px-10 py-4 text-lg rounded-lg font-semibold text-white shadow-md transition-all'
+        className='mt-12 px-10 py-4 text-lg rounded-lg font-semibold text-white shadow-md transition-all disabled:opacity-60'
         style={{ backgroundColor: accentColor }}
+        disabled={isBooking || booked}
+        onClick={handleBook}
       >
-        Book a Test Drive
+        {isBooking
+          ? 'Booking…'
+          : booked
+          ? 'Test Drive Booked'
+          : 'Book a Test Drive'}
       </motion.button>
     </section>
   );
