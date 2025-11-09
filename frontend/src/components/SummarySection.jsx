@@ -178,7 +178,7 @@ export default function SummarySection({
           }}
           whileTap={{ scale: 0.96 }}
           transition={{ duration: 0.3 }}
-          className='px-10 py-4 text-lg rounded-lg font-semibold text-white shadow-md transition-all'
+          className='px-6 py-3 text-lg rounded-lg font-semibold text-white shadow-md transition-all'
           style={{ backgroundColor: accentColor }}
           onClick={() => {
             toggleGarage(car);

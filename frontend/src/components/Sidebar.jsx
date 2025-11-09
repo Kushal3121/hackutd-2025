@@ -18,9 +18,16 @@ export default function Sidebar({ onLogout }) {
 
   return (
     <aside className='w-64 bg-white text-toyotaGray flex flex-col p-5 border-r border-toyotaGray-mid'>
-      <h2 className='text-2xl font-bold text-toyotaRed mb-8 uppercase tracking-wider'>
-        Kynetic
-      </h2>
+      <div className='flex items-center gap-3 mb-8'>
+        <img
+          src='/logo.png'
+          alt='Company Logo'
+          className='h-12 w-12 object-contain rounded-sm'
+        />
+        <h2 className='text-2xl font-bold text-toyotaRed uppercase tracking-wider'>
+          Kynetic
+        </h2>
+      </div>
 
       <nav className='space-y-2'>
         <NavLink
