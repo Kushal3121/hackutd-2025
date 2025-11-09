@@ -66,7 +66,7 @@ export default function AdvancedFilters(props) {
   const selectStyles = {
     control: (base) => ({
       ...base,
-      borderRadius: '9999px',
+      borderRadius: '0.5rem',
       borderColor: '#d1d5db',
       boxShadow: 'none',
       '&:hover': { borderColor: '#EB0A1E' },
@@ -146,7 +146,7 @@ export default function AdvancedFilters(props) {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder='Search...'
-                  className='w-full border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:border-[#EB0A1E] focus:ring-1 focus:ring-[#EB0A1E]'
+                  className='w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:border-[#EB0A1E] focus:ring-1 focus:ring-[#EB0A1E]'
                 />
               </CardSection>
 
@@ -278,7 +278,7 @@ export default function AdvancedFilters(props) {
               </div>
             </div>
 
-            {/* Sticky footer */}
+            {/* Sticky Footer */}
             <div className='p-3 border-t bg-white flex justify-between items-center'>
               <span className='text-sm text-gray-600'>
                 Showing {visibleCount} of {matchCount} matches
@@ -297,11 +297,11 @@ export default function AdvancedFilters(props) {
   );
 }
 
-/* ---------- Shared UI Elements ---------- */
+/* ---------- UI Blocks ---------- */
 
 function CardSection({ label, children }) {
   return (
-    <div className='bg-white rounded-xl p-3 shadow-sm border border-gray-100'>
+    <div className='bg-white rounded-md p-3 shadow-sm border border-gray-100'>
       <label className='block text-sm font-medium text-gray-700 mb-1'>
         {label}
       </label>
@@ -312,7 +312,7 @@ function CardSection({ label, children }) {
 
 function IconSection({ icon, label, children }) {
   return (
-    <div className='bg-white rounded-xl p-3 shadow-sm border border-gray-100'>
+    <div className='bg-white rounded-md p-3 shadow-sm border border-gray-100'>
       <div className='flex items-center gap-2 mb-1 text-gray-700 font-medium'>
         {icon} {label}
       </div>
@@ -321,7 +321,7 @@ function IconSection({ icon, label, children }) {
   );
 }
 
-/* ---------- Uniform Pill Grid ---------- */
+/* ---------- Pill Grid ---------- */
 
 function PillGrid({ label, items = [], selected, setSelected }) {
   if (label)
@@ -357,7 +357,7 @@ function PillGridInner({ items, selected, setSelected }) {
                 active ? cur.filter((x) => x !== item) : [...cur, item]
               )
             }
-            className={`text-sm font-medium px-3 py-1.5 rounded-full border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#EB0A1E]
+            className={`text-sm font-medium px-3 py-1.5 rounded-md border transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-[#EB0A1E]
               ${
                 active
                   ? 'bg-[#EB0A1E] text-white border-[#EB0A1E]'
@@ -372,7 +372,7 @@ function PillGridInner({ items, selected, setSelected }) {
   );
 }
 
-/* ---------- Ranges ---------- */
+/* ---------- Range Controls ---------- */
 
 function RangeControl({
   label,
@@ -396,10 +396,10 @@ function RangeControl({
           renderTrack={({ props, children }) => (
             <div
               {...props}
-              className='h-2 w-full bg-gray-200 rounded-full relative'
+              className='h-2 w-full bg-gray-200 rounded-md relative'
             >
               <div
-                className='absolute h-2 bg-[#EB0A1E] rounded-full'
+                className='absolute h-2 bg-[#EB0A1E] rounded-md'
                 style={{
                   left: `${((lo - min) / (max - min)) * 100}%`,
                   width: `${((hi - lo) / (max - min)) * 100}%`,
@@ -411,7 +411,7 @@ function RangeControl({
           renderThumb={({ props }) => (
             <div
               {...props}
-              className='w-4 h-4 bg-white border-2 border-[#EB0A1E] rounded-full shadow'
+              className='w-4 h-4 bg-white border-2 border-[#EB0A1E] rounded-md shadow'
             />
           )}
         />
