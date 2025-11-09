@@ -25,6 +25,7 @@ export default function Signup() {
       const res = await signupUser(form);
       if (res.user) {
         localStorage.setItem('user', JSON.stringify(res.user));
+        if (res.token) localStorage.setItem('token', res.token);
 
         toast.success('Account created successfully!');
         setTimeout(() => navigate('/dashboard'), 200);

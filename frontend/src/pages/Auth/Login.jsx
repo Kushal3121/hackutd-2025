@@ -22,6 +22,7 @@ export default function Login() {
       if (res.user) {
         toast.success('Login successful!');
         localStorage.setItem('user', JSON.stringify(res.user));
+        if (res.token) localStorage.setItem('token', res.token);
         navigate('/dashboard');
       } else {
         toast.error(res.error || 'Invalid credentials');

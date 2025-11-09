@@ -6,6 +6,18 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
+// Attach Authorization header automatically if token exists
+api.interceptors.request.use((config) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  } catch {}
+  return config;
+});
+
 // --- Auth APIs ---
 export const signupUser = async ({ username, name, password }) => {
   const { data } = await api.post(API_ROUTES.SIGNUP, {

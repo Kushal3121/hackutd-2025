@@ -11,12 +11,14 @@ export default function DashboardLayout() {
 
   useEffect(() => {
     const stored = localStorage.getItem('user');
-    if (stored) setUser(JSON.parse(stored));
+    const token = localStorage.getItem('token');
+    if (stored && token) setUser(JSON.parse(stored));
     else navigate('/login');
   }, [navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('token');
     navigate('/');
   };
 

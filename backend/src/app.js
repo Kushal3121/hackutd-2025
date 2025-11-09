@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import authRoutes from './routes/authRoutes.js';
 import carRoutes from './routes/carRoutes.js';
 import testDriveRoutes from './routes/testDriveRoutes.js';
@@ -7,8 +8,11 @@ import leaseRoutes from './routes/leaseRoutes.js';
 import { initUsers } from './models/userModel.js';
 import { initTestDrives } from './models/testDriveModel.js';
 import { initLeases } from './controllers/leaseController.js';
+import { authMiddleware } from './middleware/authMiddleware.js';
 
 const app = express();
+
+dotenv.config();
 
 app.use(
   cors({
@@ -20,9 +24,9 @@ app.use(
 
 app.use(express.json());
 app.use('/', authRoutes);
-app.use('/api/cars', carRoutes);
-app.use('/api/testdrive', testDriveRoutes);
-app.use('/api/lease', leaseRoutes);
+app.use('/api/cars', authMiddleware, carRoutes);
+app.use('/api/testdrive', authMiddleware, testDriveRoutes);
+app.use('/api/lease', authMiddleware, leaseRoutes);
 
 app.use((req, res) => res.status(404).json({ error: 'route not found' }));
 

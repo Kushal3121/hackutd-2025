@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 import { v4 as uuid } from 'uuid';
 import {
   getUser,
@@ -28,9 +29,16 @@ export async function signup(req, res) {
   };
 
   await addUser(newUser);
-  res
-    .status(201)
-    .json({ message: 'user created', user: sanitizeUser(newUser) });
+  const token = jwt.sign(
+    { id: newUser.id, username: newUser.username, name: newUser.name },
+    process.env.JWT_SECRET || 'dev-secret',
+    { expiresIn: '7d' }
+  );
+  res.status(201).json({
+    message: 'user created',
+    user: sanitizeUser(newUser),
+    token,
+  });
 }
 
 export async function login(req, res) {
@@ -44,7 +52,12 @@ export async function login(req, res) {
   const valid = await bcrypt.compare(password, user.passwordHash);
   if (!valid) return res.status(401).json({ error: 'invalid credentials' });
 
-  res.json({ message: 'login successful', user: sanitizeUser(user) });
+  const token = jwt.sign(
+    { id: user.id, username: user.username, name: user.name },
+    process.env.JWT_SECRET || 'dev-secret',
+    { expiresIn: '7d' }
+  );
+  res.json({ message: 'login successful', user: sanitizeUser(user), token });
 }
 
 export async function resetPassword(req, res) {
