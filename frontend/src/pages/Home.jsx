@@ -1,7 +1,8 @@
 import Navbar from '../components/Navbar';
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useState, useEffect, useRef } from 'react';
+
 import {
   Car,
   Zap,
@@ -10,8 +11,6 @@ import {
   Award,
   Headphones,
   Users,
-  TrendingUp,
-  Clock,
   Star,
   Facebook,
   Twitter,
@@ -49,65 +48,22 @@ export default function Home() {
     visible: { opacity: 1, scale: 1 },
   };
 
-  // Counter animation - starts when the element enters the viewport
-  const Counter = ({ end, duration = 2000, suffix = '' }) => {
-    const ref = useRef(null);
-    const inView = useInView(ref, { once: true, margin: '-100px' });
-    const [value, setValue] = useState(0);
-
-    useEffect(() => {
-      if (!inView) return;
-      let start;
-      let rafId;
-      const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
-      const step = (ts) => {
-        if (!start) start = ts;
-        const progress = Math.min((ts - start) / duration, 1);
-        const eased = easeOutCubic(progress);
-        setValue(Math.round(end * eased));
-        if (progress < 1) rafId = requestAnimationFrame(step);
-      };
-      rafId = requestAnimationFrame(step);
-      return () => cancelAnimationFrame(rafId);
-    }, [inView, end, duration]);
-
+  // Static display component (no animation) as requested
+  const Counter = ({ end, suffix = '' }) => {
     return (
-      <span ref={ref}>
-        {value}
+      <span>
+        {end}
         {suffix}
       </span>
     );
   };
 
   return (
-    <div className='min-h-screen flex flex-col bg-gradient-to-b from-gray-50 via-white to-gray-50 text-toyotaGray overflow-hidden'>
+    <div className='min-h-screen flex flex-col bg-white text-toyotaGray overflow-hidden'>
       <Navbar />
 
       {/* Hero Section */}
-      <section className='flex flex-col items-center justify-start min-h-screen px-6 pt-32 pb-20 text-center relative overflow-hidden bg-gradient-to-br from-white via-gray-50 to-white'>
-        {/* Background Pattern */}
-        <div
-          className='absolute inset-0 opacity-[0.03]'
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, rgb(0 0 0) 1px, transparent 0)`,
-            backgroundSize: '40px 40px',
-          }}
-        />
-
-        {/* Background Accent Lights */}
-        <motion.div
-          aria-hidden='true'
-          className='absolute top-20 left-0 h-[25rem] w-[25rem] rounded-full bg-[#eb0a1e]/8 blur-[120px]'
-          animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
-          transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div
-          aria-hidden='true'
-          className='absolute top-40 right-0 h-[25rem] w-[25rem] rounded-full bg-[#eb0a1e]/8 blur-[120px]'
-          animate={{ x: [0, -50, 0], y: [0, -30, 0] }}
-          transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
-        />
-
+      <section className='flex flex-col items-center justify-start px-6 pt-24 pb-6 text-center relative overflow-hidden bg-white'>
         {/* Headline + Tagline */}
         <motion.div
           initial={{ opacity: 0, y: 25 }}
@@ -116,7 +72,7 @@ export default function Home() {
           className='relative z-10 max-w-4xl px-4'
         >
           <motion.h1
-            className='text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6 text-black'
+            className='text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight mb-6 text-black py-10'
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1, duration: 0.7 }}
@@ -144,7 +100,7 @@ export default function Home() {
 
           {/* CTAs */}
           <motion.div
-            className='flex flex-col sm:flex-row justify-center gap-4'
+            className='flex flex-col sm:flex-row justify-center gap-4 py-12'
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.55, duration: 0.6 }}
@@ -152,7 +108,7 @@ export default function Home() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
               <Link
                 to='/signup'
-                className='px-9 py-3 bg-[#eb0a1e] text-white font-semibold rounded-lg shadow-[0_8px_25px_rgba(235,10,30,0.25)] hover:shadow-[0_10px_32px_rgba(235,10,30,0.35)] hover:bg-[#d1091b] transition-all'
+                className='px-9 py-3 bg-[#eb0a1e] text-white font-semibold rounded-lg  hover:bg-[#d1091b] transition-all'
               >
                 Get Started
               </Link>
@@ -167,103 +123,11 @@ export default function Home() {
             </motion.div>
           </motion.div>
         </motion.div>
-
-        {/* Hero Car Image */}
-        <motion.div
-          initial={{ opacity: 0, y: 60 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 1, ease: [0.22, 1, 0.36, 1] }}
-          className='relative mt-16 w-full z-10 px-4 md:px-8 lg:px-12 xl:px-16'
-        >
-          {/* Glow effects behind the car */}
-          <div className='absolute inset-0 -z-10'>
-            <div className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[300px] bg-[#eb0a1e]/20 blur-[100px] rounded-full' />
-          </div>
-
-          <div className='relative group'>
-            {/* Main car image container */}
-            <div className='relative overflow-hidden rounded-[2rem] shadow-[0_20px_60px_rgba(0,0,0,0.3)] border border-white/20'>
-              <motion.img
-                src='/images/grsupra.jpg'
-                alt='Toyota GR Supra'
-                className='w-full h-[520px] sm:h-[640px] md:h-[720px] lg:h-[780px] xl:h-[840px] object-cover object-center'
-                whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.6 }}
-              />
-
-              {/* Gradient overlays for depth */}
-              <div className='absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10 pointer-events-none' />
-              <div className='absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/30 pointer-events-none' />
-
-              {/* Floating info badge */}
-              <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.2, duration: 0.8 }}
-                className='absolute bottom-4 left-4 sm:bottom-8 sm:left-8 bg-white/95 backdrop-blur-md px-4 py-3 sm:px-6 sm:py-4 rounded-2xl shadow-2xl border border-white/40'
-              >
-                <div className='flex items-center gap-3 sm:gap-4'>
-                  <div className='bg-[#eb0a1e] p-2 sm:p-3 rounded-xl'>
-                    <Car className='w-5 h-5 sm:w-6 sm:h-6 text-white' />
-                  </div>
-                  <div className='text-left'>
-                    <p className='text-xs sm:text-sm text-gray-500 font-medium'>
-                      Featured Model
-                    </p>
-                    <p className='text-base sm:text-lg font-bold text-black'>
-                      GR Supra 2024
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Performance badge */}
-              <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.4, duration: 0.8 }}
-                className='absolute top-4 right-4 sm:top-8 sm:right-8 bg-gradient-to-br from-[#eb0a1e] to-[#d1091b] px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-2xl'
-              >
-                <p className='text-white font-bold text-xs sm:text-sm flex items-center gap-1.5 sm:gap-2'>
-                  <Zap className='w-3.5 h-3.5 sm:w-4 sm:h-4' />
-                  335 HP
-                </p>
-              </motion.div>
-            </div>
-
-            {/* Animated border glow */}
-            <div className='absolute inset-0 rounded-[2rem] bg-gradient-to-r from-[#eb0a1e] via-[#ff3355] to-[#eb0a1e] opacity-0 group-hover:opacity-30 blur-2xl transition-opacity duration-700 -z-10' />
-
-            {/* Corner accents */}
-            <motion.div
-              className='absolute -top-1 -left-1 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 border-t-[3px] border-l-[3px] border-[#eb0a1e] rounded-tl-[2rem]'
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 0.5 }}
-            />
-            <motion.div
-              className='absolute -bottom-1 -right-1 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 border-b-[3px] border-r-[3px] border-[#eb0a1e] rounded-br-[2rem]'
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1, duration: 0.5 }}
-            />
-          </div>
-        </motion.div>
-
-        <motion.div
-          className='absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20'
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1, y: [0, 8, 0] }}
-          transition={{
-            opacity: { delay: 1.5, duration: 0.5 },
-            y: { duration: 2, repeat: Infinity, ease: 'easeInOut' },
-          }}
-        ></motion.div>
       </section>
 
       {/* Stats Section */}
       <motion.section
-        className='py-20 px-6 bg-white relative overflow-hidden'
+        className='px-6 pt-10 pb-16 bg-white relative overflow-hidden'
         initial='hidden'
         whileInView='visible'
         viewport={{ once: true, margin: '-100px' }}
@@ -723,40 +587,44 @@ export default function Home() {
             <div>
               <h4 className='font-bold text-black mb-3'>Connect</h4>
               <div className='flex gap-4'>
-                <motion.a
+                <motion.button
+                  type='button'
+                  aria-label='Facebook'
                   whileHover={{ scale: 1.2, y: -2 }}
-                  href='#'
                   className='hover:text-[#eb0a1e] transition'
                 >
                   <Facebook className='w-6 h-6' />
-                </motion.a>
-                <motion.a
+                </motion.button>
+                <motion.button
+                  type='button'
+                  aria-label='Twitter'
                   whileHover={{ scale: 1.2, y: -2 }}
-                  href='#'
                   className='hover:text-[#eb0a1e] transition'
                 >
                   <Twitter className='w-6 h-6' />
-                </motion.a>
-                <motion.a
+                </motion.button>
+                <motion.button
+                  type='button'
+                  aria-label='Instagram'
                   whileHover={{ scale: 1.2, y: -2 }}
-                  href='#'
                   className='hover:text-[#eb0a1e] transition'
                 >
                   <Instagram className='w-6 h-6' />
-                </motion.a>
-                <motion.a
+                </motion.button>
+                <motion.button
+                  type='button'
+                  aria-label='YouTube'
                   whileHover={{ scale: 1.2, y: -2 }}
-                  href='#'
                   className='hover:text-[#eb0a1e] transition'
                 >
                   <Youtube className='w-6 h-6' />
-                </motion.a>
+                </motion.button>
               </div>
             </div>
           </div>
           <div className='border-t border-gray-300 pt-6 text-center text-sm'>
             <p>
-              © {new Date().getFullYear()} Kynetic — All Rights Reserved. |
+              © {new Date().getFullYear()} Kynetic - All Rights Reserved. |
               Privacy Policy | Terms of Service
             </p>
           </div>
